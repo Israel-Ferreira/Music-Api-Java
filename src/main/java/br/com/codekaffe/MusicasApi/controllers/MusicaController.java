@@ -2,14 +2,15 @@ package br.com.codekaffe.MusicasApi.controllers;
 
 
 import br.com.codekaffe.MusicasApi.models.Album;
-import br.com.codekaffe.MusicasApi.models.Message;
 import br.com.codekaffe.MusicasApi.models.Musica;
 import br.com.codekaffe.MusicasApi.repository.MusicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class MusicaController {
@@ -70,6 +71,16 @@ public class MusicaController {
         album.adicionarMusica(musica);
         musicaRepository.save(album);
         return "Musica Adicionada com sucesso";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/api/albuns/search")
+    public List<Album> procurarAlbuns(@RequestParam String search){
+        if(search.equals("")){
+            return new ArrayList<>();
+        }
+
+        List<Album> albuns = musicaRepository.getAllAlbuns();
+        return albuns.stream().filter(album -> album.getNomeDoAlbum().contains(search)).collect(Collectors.toList());
     }
 
 }
